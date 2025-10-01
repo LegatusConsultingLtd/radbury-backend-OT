@@ -6,8 +6,9 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const app = express();
-const PORT = 4000;
-const SECRET = "radbury_secret_key";
+const PORT = process.env.PORT || 4000;
+const SECRET = process.env.SECRET || "radbury_secret_key";
+
 
 // Middleware
 app.use(cors());
