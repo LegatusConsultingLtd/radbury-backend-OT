@@ -207,21 +207,17 @@ app.get("/admin/overtime", authenticateToken, (req, res) => {
   });
 });
 
-// 🚨 TEMPORARY ROUTE TO PROMOTE USERS TO ADMIN
-app.post("/make-admin", (req, res) => {
-  const { email } = req.body;
-
-  if (!email) return res.status(400).json({ error: "Email required" });
+// Temporary admin creation route
+app.post("/make-admin", async (req, res) => {
+  const { email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   db.run(
-    `UPDATE users SET role = 'admin' WHERE email = ?`,
-    [email],
+    `INSERT INTO users (email, password, role) VALUES (?, ?, ?)`,
+    [email, hashedPassword, "admin"],
     function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      if (this.changes === 0)
-        return res.status(404).json({ error: "User not found" });
-
-      res.json({ success: true, message: `${email} is now an admin ✅` });
+      if (err) return res.status(400).json({ error: "User exists or DB error" });
+      res.json({ success: true, message: "Admin user created", id: this.lastID });
     }
   );
 });
