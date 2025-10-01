@@ -207,6 +207,24 @@ app.get("/admin/overtime", authenticateToken, (req, res) => {
   });
 });
 
+// 🚨 TEMPORARY ROUTE TO PROMOTE USERS TO ADMIN
+app.post("/make-admin", (req, res) => {
+  const { email } = req.body;
+
+  if (!email) return res.status(400).json({ error: "Email required" });
+
+  db.run(
+    `UPDATE users SET role = 'admin' WHERE email = ?`,
+    [email],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0)
+        return res.status(404).json({ error: "User not found" });
+
+      res.json({ success: true, message: `${email} is now an admin ✅` });
+    }
+  );
+});
 
 app.listen(PORT, () => {
   console.log(`🚀 Backend running on http://localhost:${PORT}`);
