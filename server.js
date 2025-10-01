@@ -14,8 +14,8 @@ const SECRET = process.env.SECRET || "radbury_secret_key";
 app.use(cors());
 app.use(bodyParser.json());
 
-// Database init
-const db = new sqlite3.Database("./database.sqlite", async (err) => {
+// Use Render persistent disk path
+const db = new sqlite3.Database("/var/data/database.sqlite", async (err) => {
   if (err) console.error("Error opening DB:", err);
   else {
     db.run(`
