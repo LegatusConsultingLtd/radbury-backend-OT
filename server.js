@@ -207,21 +207,6 @@ app.get("/admin/overtime", authenticateToken, (req, res) => {
   });
 });
 
-// Temporary admin creation route
-app.post("/make-admin", async (req, res) => {
-  const { email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  db.run(
-    `INSERT INTO users (email, password, role) VALUES (?, ?, ?)`,
-    [email, hashedPassword, "admin"],
-    function (err) {
-      if (err) return res.status(400).json({ error: "User exists or DB error" });
-      res.json({ success: true, message: "Admin user created", id: this.lastID });
-    }
-  );
-});
-
 app.listen(PORT, () => {
   console.log(`🚀 Backend running on http://localhost:${PORT}`);
 });
